@@ -1,0 +1,35 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: podwith2container
+  labels:
+    team: saiTeam
+spec:
+  containers:
+  - name: firstcontainer
+    image: saipraneeth8188/saidocker:1
+    ports:
+    - containerPort: 8080
+  - name: secondcontainer
+    image: nginx
+    ports:
+    - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: testsvc
+spec:
+  type: NodePort
+  selector:
+    team: saiTeam
+  ports:
+  - port: 8080        # Service port
+    targetPort: 8080  # Matches the first container's port
+    nodePort: 30001   # Optional: Specify NodePort (automatically assigned if omitted)
+    name: maven
+  - port: 80          # Service port
+    targetPort: 80    # Matches the second container's port
+    nodePort: 30002   # Optional: Specify NodePort
+    name: nginx
+

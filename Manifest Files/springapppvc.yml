@@ -1,0 +1,59 @@
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  name: mongodb
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mongo
+  template:
+    metadata:
+      name: myapp
+      labels:
+        app: mongo
+    spec:
+      containers:
+      - name: mongocontainer
+        image: mongo
+        ports:
+        - name: mongodb
+          containerPort: 27017
+          protocol: TCP
+        env:
+        - name: MONGO_INITDB_ROOT_USERNAME
+          value: devdb
+        - name: MONGO_INITDB_ROOT_PASSWORD
+          value: devdb@123
+        volumeMounts:
+        - name: mongodbhostval
+          mountPath: /data/db
+      volumes:
+      - name: mongodbhostval
+        persistentVolumeClaim:
+          claimName: mongopvc
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongosvc
+spec:
+  type: ClusterIP
+  selector:
+    app: mongo
+  ports:
+  - port: 27017
+    targetPort: 27017
+---
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mongopvc
+spec:
+  resources:
+    requests:
+      storage: 1Gi
+  accessModes:
+    - ReadWriteOnce

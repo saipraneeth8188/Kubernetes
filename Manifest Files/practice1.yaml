@@ -1,0 +1,43 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: podwith2container
+  labels:
+    team: saiTeam
+spec:
+  containers:
+  - name: firstcontainer
+    image: saipraneeth8188/saidocker:1
+    ports:
+    - containerPort: 8080
+  - name: secondcontainer
+    image: nginx
+    ports:
+    - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: service-for-maven
+spec:
+  type: ClusterIP
+  selector:
+    team: saiTeam
+  ports:
+  - port: 8080        # Service port
+    targetPort: 8080  # Target container port (firstcontainer)
+    name: maven-service
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: service-for-nginx
+spec:
+  type: ClusterIP
+  selector:
+    team: saiTeam
+  ports:
+  - port: 80          # Service port
+    targetPort: 80    # Target container port (secondcontainer)
+    name: nginx-service
+

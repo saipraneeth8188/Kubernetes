@@ -1,0 +1,46 @@
+apiVersion: v1
+kind: ReplicationController
+metadata:
+  name: nameofthereplicationcontroller
+  namespace: test-ns
+  labels:
+    team: saiReplicationTeam
+spec:
+  replicas: 1
+  selector:
+    team: saipod
+  template:
+    metadata:
+      name: saipod
+      labels:
+        team: saipod
+    spec:
+      containers:
+      - name: firstimage
+        image: saipraneeth8188/saidocker:1
+        ports:
+        - containerPort: 8080
+      - name: secondimage
+        image: nginx
+        ports:
+        - containerPort: 80
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: serviceforreplicationcontroller
+  namespace: test-ns
+spec:
+  type: NodePort
+  selector:
+    team: saipod
+  ports:
+  - port: 8080
+    targetPort: 8080
+    name: maven
+  - port: 80
+    targetPort: 80
+    name: nginx
+

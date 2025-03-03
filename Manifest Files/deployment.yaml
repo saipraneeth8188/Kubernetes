@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nameofthedeployment
+  namespace: test-ns
+spec:
+  replicas: 2
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      team: saipod
+  template:
+    metadata:
+      name: saipodname
+      labels:
+        team: saipod
+    spec:
+      containers:
+      - name: firstimage
+        image: nginx
+        ports:
+        - containerPort: 80
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: servicefordeployment
+  namespace: test-ns
+spec:
+  type: NodePort
+  selector:
+    team: saipod
+  ports:
+  - port: 80
+    targetPort: 80
+
